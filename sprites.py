@@ -422,13 +422,22 @@ class Timer:
     def __init__(self, game):
         self.game = game
         self.timer_loop = 0
-        self.minutes = 10
-        self.seconds = 0
+        self.minutes = 3
+        self.seconds = 3
+        self.level = 1
 
     def update(self):
         text = self.game.font.render(f'{self.minutes:02d}:{self.seconds:02d}', True, WHITE)
         text_rect = text.get_rect(center=(win_width - win_width / 10, win_height / 6))
+        if self.level == 1:
+            level_text = self.game.font.render('Easy', True, GREEN)
+        elif self.level == 2:
+            level_text = self.game.font.render('Normal', True, YELLOW)
+        else:
+            level_text = self.game.font.render('Hard', True, RED)
+        level_text_rect = level_text.get_rect(center=(win_width - win_width / 10, win_height / 4))
         self.game.screen.blit(text, text_rect)
+        self.game.screen.blit(level_text, level_text_rect)
         self.timer_loop += 1
         if self.timer_loop == 60:
             if self.seconds > 0:
@@ -436,6 +445,11 @@ class Timer:
             else:
                 self.minutes -= 1
                 self.seconds = 59
+
+            if self.minutes == 6 and self.seconds == 0:
+                self.level = 2
+            if self.minutes == 3 and self.seconds == 0:
+                self.level = 3
 
             if self.minutes == 0 and self.seconds == 0:
                 self.game.playing = False
@@ -459,6 +473,6 @@ class Spawn_Enemy:
             self.timer_loop = 0
             if self.seconds % self.time_interval == 0:
                 Enemy(self.game, random.randint(0, 110), random.randint(0, 52))
-            if self.seconds >= 250:
+            if self.seconds >= 240:
                 self.seconds = 0
                 self.time_interval -= 1
